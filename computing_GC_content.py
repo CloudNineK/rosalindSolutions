@@ -7,12 +7,13 @@
 """
 
 import sys
+import collections
 
 
 def main():
 
     fName = sys.argv[1]
-    output = {}
+    output = collections.OrderedDict()
 
     with open(fName, 'r') as f:
 
@@ -33,8 +34,6 @@ def main():
                 output[key] = output[key] + line.rstrip('\n')
 
     # Calculate GC content
-    max = 0
-    maxKey = ''
     for key in output.keys():
         count = 0
 
@@ -43,15 +42,16 @@ def main():
             if char == 'G' or char == 'C':
                 count += 1
 
-        GC = (count / len(output[key])) * 100
-        if GC > max:
-            max = GC
-            maxKey = key
+        output[key] = (count / len(output[key])) * 100
 
     # Build output string
     outString = ''
-    outString += maxKey + '\n'
-    outString += '{:f}'.format(max)
+    for key in output.keys():
+        outString += key + '\n'
+        outString += '{:f}'.format(output[key]) + '\n'
+
+    # Strip Trailing newline character
+    outString.rstrip('\n')
 
     print(outString)
 
